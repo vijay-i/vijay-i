@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>PLOT SEARCH</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+    </style>
+</head>
+ 
+<body>
+    <div class="fields">
+        <input type="text" class="SPSNWA plotNo" placeholder="PLOT NO" >
+    <input type="text" class="cellNo plotNo" placeholder="CELL NO">
+    <button class="search">Search</button>
+    </div>
+
+    <div class="whole"></div>
+    <script>
+        const button = document.querySelector('.search')
+        const containerEl = document.querySelector('.whole')
+
+        button.addEventListener('click', () => {
+            let plotNo = document.querySelector(".plotNo").value;
+            let cellNo = document.querySelector('.cellNo').value;
+            search(plotNo, cellNo);
+        })
+
+            const search = async (plotNo, cellNo) => {
+                let workbook = XLSX.read(await (await fetch("./plotsData.xlsx")).arrayBuffer());
+                let worksheet = workbook.SheetNames;
+                let json = XLSX.utils.sheet_to_json(workbook.Sheets['phase 1']);
+                let html = "";
+
+                json.forEach(item => {
+                  console.log(item.PAID)
+                    if (item.plotNo == plotNo) {
+                        if (item.cellNo == cellNo) {
+                            html += `
+            <div class="container">
+              <h3><span>PLOT NO:</span> ${item.plotNo}</h3>
+              <h3><span>NAME & ADDRESS:</span> ${item.nameAndAddress}</h3>
+              <h3><span>CELL NO:</span> ${item.cellNo}</h3>
+              <div class="fee">
+                <div class="fee1">
+                  <h3><span>MEM FEE:</span> ${item.AMOUNT}</h3>
+                  <h3><span>2012-2013:</span> ${item.AMOUNT2012_2013}</h3>
+                  <h3><span>2013-2014:</span> ${item.AMOUNT2013_2014}</h3>
+                  <h3><span>2014-2015:</span> ${item.AMOUNT2014_2015}</h3>
+                </div>
+
+                <div class="fee2">
+                  <h3><span>2015-2016:</span> ${item.AMOUNT2015_2016}</h3>
+                  <h3><span>2016-2017:</span> ${item.AMOUNT2016_2017}</h3>
+                  <h3><span>2017-2018:</span> ${item.AMOUNT2017_2018}</h3>
+                  <h3><span>2018-2019:</span> ${item.AMOUNT2018_2019}</h3>
+                </div>
+
+                <div class="fee3">
+                  <h3><span>2019-2020:</span> ${item.AMOUNT2019_2020}</h3>
+                  <h3><span>2020-2021:</span> ${item.AMOUNT2020_2021}</h3>
+                  <h3><span>2021-2022:</span> ${item.AMOUNT2021_2022}</h3>
+                  <h3><span>2022-2023:</span> ${item.AMOUNT2022_2023}</h3>
+                </div>
+              </div>
+
+              <h3><span>PAID:</span> ${item.PAID}</h3>
+              <h3><span>PENDING:</span> ${item.PENDING}</h3>
+              <h3><span>TOTAL PENDING:</span> ${item.TOTAL_PENDING}</h3>
+              <h3><span>TOTAL INCOME:</span> ${item.TOTAL_INCOME}</h3>
+            </div>
+                        `
+                        }
+                    }
+                })
+
+                if (html == '') {
+                    html += `<h3 class="error">PLOT number and CELL number does n't match...</h3>`
+                }
+
+                containerEl.innerHTML = html;
+            }
+    </script>
+</body>
+ 
+</html>
